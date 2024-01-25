@@ -111,15 +111,15 @@
 				});
 			}
 			( async ()=> {
-				// let x = await test_post({
-				// 	date: '2024-01-25' ,
-				// 	type: 'example' ,
-				// 	html: '<p>Example HTML</p>' ,
-				// 	text: 'Example text' ,
-				// 	mark_down: [ '# Title' , '\n' , '- asdf 1' , '- asdf2' , '- asdf 3' ]
-				// });
-				// console.log( x );
-				console.log( await test_get_post_via_seq_id( 7 ) );
+				let x = await test_post({
+					date: '2024-01-25' ,
+					type: 'example' ,
+					html: '<p>Example HTML</p>' ,
+					text: 'Example text' ,
+					mark_down: [ '# Title' , '\n' , '- asdf 1' , '- asdf2' , '- asdf 3' ]
+				});
+				console.log( x );
+				// console.log( await test_get_post_via_seq_id( 7 ) );
 			})();
 		</script>
 	</body>

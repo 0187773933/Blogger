@@ -24,6 +24,7 @@ type ConfigFile struct {
 
 type Post struct {
 	UUID string `json:"uuid"`
+	ULID string `json:"ulid"`
 	SeqID int `json:"seq_id"`
 	Date string `json:"date"`
 	Type string `json:"type"`
