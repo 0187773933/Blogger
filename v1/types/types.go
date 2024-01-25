@@ -28,5 +28,9 @@ type Post struct {
 	HTML string `yaml:"html"`
 	Text string `yaml:"text"`
 	MD []string `yaml:"mark_down"`
-	Bytes []byte `yaml:"bytes"`
+}
+
+type FileData struct {
+	FileName string
+	Data []byte
 }

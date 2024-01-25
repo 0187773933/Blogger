@@ -9,7 +9,6 @@ import (
 	// "strings"
 	"io/ioutil"
 	yaml "gopkg.in/yaml.v2"
-	// hid "github.com/dh1tw/hid"
 	types "github.com/0187773933/Blogger/v1/types"
 	fiber_cookie "github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	encryption "github.com/0187773933/encryption/v1/encryption"
@@ -46,6 +45,10 @@ func FormatTime( input_time *time.Time ) ( result string ) {
 	return
 }
 
+func PrettyPrint( input interface{} ) {
+	jd , _ := json.MarshalIndent( input , "" , "  " )
+	fmt.Println( string( jd ) )
+}
 
 func RemoveNonASCII( input string ) ( result string ) {
 	for _ , i := range input {
@@ -54,7 +57,6 @@ func RemoveNonASCII( input string ) ( result string ) {
 	}
 	return
 }
-
 const SanitizedStringSizeLimit = 100
 func SanitizeInputString( input string ) ( result string ) {
 	trimmed := strings.TrimSpace( input )

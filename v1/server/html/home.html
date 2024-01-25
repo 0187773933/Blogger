@@ -36,7 +36,7 @@
 				<div class="col-sm-3"></div>
 			</div>
 		</div>
-		<script>
+		<script type="text/javascript">
 			// https://sortablejs.github.io/Sortable/#handle
 			let x = new Sortable( document.getElementById( "example5" ) , {
 				// handle: '.handle',
@@ -47,6 +47,52 @@
 				scrollSpeed: 10 ,
 				bubbleScroll: true
 			});
+		</script>
+		<script type="text/javascript">
+			function test_post() {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						const form_data = new FormData();
+						const example_json = {
+							date: '2024-01-25' ,
+							type: 'example' ,
+							html: '<p>Example HTML</p>' ,
+							text: 'Example text' ,
+							mark_down: [ '# Title' , '\n' , '- asdf 1' , '- asdf2' , '- asdf 3' ]
+						};
+						form_data.append( "json" , JSON.stringify( example_json ) );
+
+						let example_data = new Uint8Array( 128 );
+						window.crypto.getRandomValues( example_data );
+						console.log( example_data );
+						let example_data_blob = new Blob( [ example_data ] , { type: "application/octet-stream" } );
+						form_data.append( "bytes" , example_data_blob , "random.jpeg" );
+						// const form_data_file_input = document.querySelector( 'input[type="file"]' );
+						// if ( fileInput.files[0] ) {
+							// formData.append('file', fileInput.files[0]);
+						// }
+						console.log( form_data );
+						const response = await fetch( "/post" , {
+							method: "POST" ,
+							body: form_data
+						});
+						if ( response.ok ) {
+							const response_body = await response.json();
+							console.log( 'Server response:' , response_body );
+							resolve( response_body );
+							return;
+						} else {
+							console.error( 'Server error:' , response.status );
+							resolve( false );
+							return;
+						}
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			( async ()=> {
+				await test_post()
+			})();
 		</script>
 	</body>
 </html>
