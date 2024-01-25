@@ -4,6 +4,7 @@ import (
 	"fmt"
 	fiber "github.com/gofiber/fiber/v2"
 	fiber_cookie "github.com/gofiber/fiber/v2/middleware/encryptcookie"
+	fiber_cors "github.com/gofiber/fiber/v2/middleware/cors"
 	favicon "github.com/gofiber/fiber/v2/middleware/favicon"
 	types "github.com/0187773933/Blogger/v1/types"
 	logger "github.com/0187773933/Blogger/v1/logger"
@@ -33,6 +34,12 @@ func New( config types.ConfigFile ) ( server Server ) {
 	server.FiberApp.Use( favicon.New() )
 	server.FiberApp.Use( fiber_cookie.New( fiber_cookie.Config{
 		Key: server.Config.ServerCookieSecret ,
+	}))
+	allow_origins_string := fmt.Sprintf( "%s, %s" , server.Config.ServerBaseUrl , server.Config.ServerLiveUrl )
+	server.FiberApp.Use( fiber_cors.New( fiber_cors.Config{
+		AllowOrigins: allow_origins_string ,
+		AllowHeaders:  "Origin, Content-Type, Accept, key" ,
+		AllowCredentials: true ,
 	}))
 	server.SetupRoutes()
 	server.FiberApp.Get( "/*" , func( context *fiber.Ctx ) ( error ) { return context.Redirect( "/" ) } )
