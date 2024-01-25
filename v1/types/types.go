@@ -23,11 +23,11 @@ type ConfigFile struct {
 // }
 
 type Post struct {
-	Date string `yaml:"date"`
-	Type string `yaml:"type"`
-	HTML string `yaml:"html"`
-	Text string `yaml:"text"`
-	MD []string `yaml:"mark_down"`
+	Date string `json:"date"`
+	Type string `json:"type"`
+	HTML string `json:"html"`
+	Text string `json:"text"`
+	MD []string `json:"mark_down"`
 }
 
 type FileData struct {

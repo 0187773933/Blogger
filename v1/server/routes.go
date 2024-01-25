@@ -84,19 +84,8 @@ func ( s *Server ) Upload( context *fiber.Ctx ) ( error ) {
 }
 
 func ( s *Server ) Post( context *fiber.Ctx ) ( error ) {
-	form , err := context.MultipartForm()
-	if err != nil {
-		return context.Status( fiber.StatusBadRequest ).SendString( "Error Parsing Form" )
-	}
-	json_data , exists := form.Value[ "json" ]
-	if !exists || len( json_data ) == 0 {
-		return context.Status( fiber.StatusBadRequest ).SendString( "Missing JSON data" )
-	}
 	var p types.Post
-	err = json.Unmarshal( []byte( json_data[ 0 ] ) , &p )
-	if err != nil {
-	    return context.Status(fiber.StatusBadRequest).SendString( "Error Parsing JSON Data: " + err.Error() )
-	}
+	json.Unmarshal( context.Body() , &p )
 	utils.PrettyPrint( p )
 	return context.JSON( fiber.Map{
 		"url": "/post" ,

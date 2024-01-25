@@ -99,25 +99,26 @@ func validate_session( context *fiber.Ctx ) ( result bool ) {
 	return
 }
 
-// need somthing different for hls .ts parts
-// too slow
 func validate_session_mw( context *fiber.Ctx ) ( error ) {
 	admin_cookie := context.Cookies( GlobalConfig.ServerCookieName )
 	if admin_cookie != "" {
 		admin_cookie_value := encryption.SecretBoxDecrypt( GlobalConfig.BoltDBEncryptionKey , admin_cookie )
 		if admin_cookie_value == GlobalConfig.ServerCookieAdminSecretMessage {
+			// fmt.Println( "session validated via cookie" )
 			return context.Next()
 		}
 	}
 	admin_api_key_header := context.Get( "key" )
 	if admin_api_key_header != "" {
 		if admin_api_key_header == GlobalConfig.ServerAPIKey {
+			// fmt.Println( "session validated via api key in header" )
 			return context.Next()
 		}
 	}
 	admin_api_key_query := context.Query( "k" )
 	if admin_api_key_query != "" {
 		if admin_api_key_query == GlobalConfig.ServerAPIKey {
+			// fmt.Println( "session validated via api key in url query" )
 			return context.Next()
 		}
 	}
