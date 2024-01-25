@@ -23,6 +23,8 @@ type ConfigFile struct {
 // }
 
 type Post struct {
+	UUID string `json:"uuid"`
+	SeqID int `json:"seq_id"`
 	Date string `json:"date"`
 	Type string `json:"type"`
 	HTML string `json:"html"`

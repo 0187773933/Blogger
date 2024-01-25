@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	bolt "github.com/boltdb/bolt"
 	fiber "github.com/gofiber/fiber/v2"
 	fiber_cookie "github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	fiber_cors "github.com/gofiber/fiber/v2/middleware/cors"
@@ -15,6 +16,7 @@ var log = logger.GetLogger()
 
 type Server struct {
 	FiberApp *fiber.App `yaml:"fiber_app"`
+	DB *bolt.DB `yaml:"-"`
 	Config types.ConfigFile `yaml:"config"`
 }
 
@@ -26,8 +28,9 @@ func request_logging_middleware( context *fiber.Ctx ) ( error ) {
 	return context.Next()
 }
 
-func New( config types.ConfigFile ) ( server Server ) {
+func New( db *bolt.DB , config types.ConfigFile ) ( server Server ) {
 	server.FiberApp = fiber.New()
+	server.DB = db
 	server.Config = config
 	GlobalConfig = &config
 	server.FiberApp.Use( request_logging_middleware )

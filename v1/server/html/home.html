@@ -97,15 +97,29 @@
 					catch( error ) { console.log( error ); resolve( false ); return; }
 				});
 			}
-			( async ()=> {
-				let x = await test_post({
-					date: '2024-01-25' ,
-					type: 'example' ,
-					html: '<p>Example HTML</p>' ,
-					text: 'Example text' ,
-					mark_down: [ '# Title' , '\n' , '- asdf 1' , '- asdf2' , '- asdf 3' ]
+			function test_get_post_via_seq_id( seq_id ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						let response = await fetch( `/post/${seq_id}` , {
+							method: "GET" ,
+						});
+						let response_json = await response.json();
+						resolve( response_json );
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
 				});
-				console.log( x );
+			}
+			( async ()=> {
+				// let x = await test_post({
+				// 	date: '2024-01-25' ,
+				// 	type: 'example' ,
+				// 	html: '<p>Example HTML</p>' ,
+				// 	text: 'Example text' ,
+				// 	mark_down: [ '# Title' , '\n' , '- asdf 1' , '- asdf2' , '- asdf 3' ]
+				// });
+				// console.log( x );
+				console.log( await test_get_post_via_seq_id( 7 ) );
 			})();
 		</script>
 	</body>

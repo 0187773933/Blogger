@@ -6,6 +6,7 @@ require (
 	github.com/0187773933/encryption v0.0.0-20230921140858-60fe28b9fcc0
 	github.com/boltdb/bolt v1.3.1
 	github.com/gofiber/fiber/v2 v2.51.0
+	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/crypto v0.16.0
 	gopkg.in/yaml.v2 v2.4.0

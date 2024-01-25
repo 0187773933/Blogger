@@ -3,8 +3,11 @@ package server
 import (
 	"fmt"
 	"time"
+	// "strconv"
 	"io/ioutil"
 	"encoding/json"
+	uuid "github.com/satori/go.uuid"
+	bolt "github.com/boltdb/bolt"
 	fiber "github.com/gofiber/fiber/v2"
 	rate_limiter "github.com/gofiber/fiber/v2/middleware/limiter"
 	types "github.com/0187773933/Blogger/v1/types"
@@ -84,21 +87,92 @@ func ( s *Server ) Upload( context *fiber.Ctx ) ( error ) {
 }
 
 func ( s *Server ) Post( context *fiber.Ctx ) ( error ) {
+	context_body := context.Body()
 	var p types.Post
-	json.Unmarshal( context.Body() , &p )
-	utils.PrettyPrint( p )
+	json.Unmarshal( context_body , &p )
+	p.Date = utils.GetFormattedTimeString()
+	p.UUID = uuid.NewV4().String()
+	s.DB.Update( func( tx *bolt.Tx ) error {
+		posts_bucket , _ := tx.CreateBucketIfNotExists( []byte( "posts" ) )
+		post_id , _ := posts_bucket.NextSequence()
+		p.SeqID = int( post_id )
+		utils.PrettyPrint( p )
+		post_json_bytes , _ := json.Marshal( p )
+		posts_bucket.Put( utils.IToB( post_id ) , post_json_bytes )
+		return nil
+	})
 	return context.JSON( fiber.Map{
 		"url": "/post" ,
 		"method": "POST" ,
-		"post": p ,
+		"post": context_body ,
 		"result": true ,
 	})
 }
 
+func ( s *Server ) PostGetViaSeqID( context *fiber.Ctx ) ( error ) {
+	// var p types.Post
+	// json.Unmarshal( context_body , &p )
+	seq_id := context.Params( "seq_id" )
+	// seq_id_int , _ := strconv.Atoi( seq_id )
+	// seq_id_index_int := ( seq_id_int - 1 )
+	// seq_id_index_string := strconv.Itoa( seq_id_index_int )
+	var post_string string
+	fmt.Println( "Seq ID ===" , seq_id )
+	s.DB.View( func( tx *bolt.Tx ) error {
+		// c := tx.Bucket( []byte( "posts" ) ).Cursor()
+		// k , v := c.Seek( []byte( seq_id ) )
+		// fmt.Println( k , v )
+		b := tx.Bucket( []byte( "posts" ) )
+		c := b.Cursor()
+		c.Seek( []byte( seq_id ) )
+		_ , v := c.Prev() // you have to do it this way. there is no c.Curr(). and c.Seek always goes +1 somehow
+		post_string = string( v )
+		// fmt.Printf( "key=%s, value=%s\n" , k , v )
+		// for k, v := c.First(); k != nil; k, v = c.Next() {
+		// 	fmt.Printf("key=%s, value=%s\n", k, v)
+		// }
+		return nil
+	})
+	return context.JSON( fiber.Map{
+		"url": "/post/:seq_id" ,
+		"method": "GET" ,
+		"post": post_string ,
+		"result": true ,
+	})
+}
+
+// func ( s *Server ) PostGetViaUUID( context *fiber.Ctx ) ( error ) {
+// 	var p types.Post
+// 	json.Unmarshal( context_body , &p )
+// 	s.DB.View( func( tx *bolt.Tx ) error {
+
+// 		c := tx.Bucket( []byte( "posts" ) ).Cursor()
+// 		k , v := c.Seek( min )
+
+// 		posts_bucket , _ := tx.CreateBucketIfNotExists( []byte( "posts" ) )
+// 		post_id , _ := posts_bucket.NextSequence()
+// 		posts_bucket.Put( utils.IToB( post_id ) , context_body )
+// 		return nil
+// 	})
+// 	return context.JSON( fiber.Map{
+// 		"url": "/post/:uuid" ,
+// 		"method": "GET" ,
+// 		"result": true ,
+// 	})
+// }
+
 func ( s *Server ) SetupRoutes() {
 	s.FiberApp.Get( "/" , public_limiter , s.Home )
+
+	// Auth
 	s.FiberApp.Get( "/login" , public_limiter , s.LoginGet )
 	s.FiberApp.Post( "/login" , public_limiter , s.LoginPost )
+
+	// Posts
 	s.FiberApp.Post( "/post" , private_limiter , validate_session_mw , s.Post )
+	s.FiberApp.Get( "/post/:seq_id" , private_limiter , validate_session_mw , s.PostGetViaSeqID )
+	// s.FiberApp.Get( "/post/:uuid" , private_limiter , validate_session_mw , s.PostGetViaUUID )
+
+	// Uploads
 	s.FiberApp.Post( "/upload" , private_limiter , validate_session_mw , s.Upload )
 }

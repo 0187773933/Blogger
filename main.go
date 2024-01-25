@@ -9,11 +9,12 @@ import (
 	"path/filepath"
 	utils "github.com/0187773933/Blogger/v1/utils"
 	server "github.com/0187773933/Blogger/v1/server"
-	bolt_api "github.com/boltdb/bolt"
+	bolt "github.com/boltdb/bolt"
 	logger "github.com/0187773933/Blogger/v1/logger"
 )
 
 var s server.Server
+var DB *bolt.DB
 
 func SetupCloseHandler() {
 	c := make( chan os.Signal )
@@ -22,6 +23,7 @@ func SetupCloseHandler() {
 		<-c
 		fmt.Println( "\r- Ctrl+C pressed in Terminal" )
 		fmt.Println( "Shutting Down Blogger Server" )
+		DB.Close()
 		s.FiberApp.Shutdown()
 		os.Exit( 0 )
 	}()
@@ -37,13 +39,12 @@ func main() {
 	logger.Init()
 	logger.Log.Printf( "Loaded Config File From : %s" , config_file_path )
 
-	db , _ := bolt_api.Open( config.BoltDBPath , 0600 , &bolt_api.Options{ Timeout: ( 3 * time.Second ) } )
-	fmt.Println( db )
+	DB , _ = bolt.Open( config.BoltDBPath , 0600 , &bolt.Options{ Timeout: ( 3 * time.Second ) } )
 
 	SetupCloseHandler()
 
 	// utils.GenerateNewKeys()
-	s = server.New( config )
+	s = server.New( DB , config )
 	s.Start()
 
 }

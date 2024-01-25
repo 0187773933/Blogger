@@ -5,14 +5,21 @@ import (
 	"time"
 	"strings"
 	"unicode"
-	"encoding/json"
+	binary "encoding/binary"
+	json "encoding/json"
 	// "strings"
-	"io/ioutil"
+	ioutil "io/ioutil"
 	yaml "gopkg.in/yaml.v2"
 	types "github.com/0187773933/Blogger/v1/types"
 	fiber_cookie "github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	encryption "github.com/0187773933/encryption/v1/encryption"
 )
+
+func IToB( v uint64 ) []byte {
+	b := make( []byte , 8 )
+	binary.BigEndian.PutUint64( b , v )
+	return b
+}
 
 func GetFormattedTimeString() ( result string ) {
 	location , _ := time.LoadLocation( "America/New_York" )
