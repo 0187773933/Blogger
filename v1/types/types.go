@@ -2,6 +2,7 @@ package types
 
 type ConfigFile struct {
 	ServerBaseUrl string `yaml:"server_base_url"`
+	ServerLiveUrl string `yaml:"server_live_url"`
 	ServerPort string `yaml:"server_port"`
 	ServerAPIKey string `yaml:"server_api_key"`
 	ServerCookieName string `yaml:"server_cookie_name"`
