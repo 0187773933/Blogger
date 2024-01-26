@@ -2,8 +2,10 @@ package server
 
 import (
 	"fmt"
+	"time"
 	// "strings"
 	fiber "github.com/gofiber/fiber/v2"
+	rate_limiter "github.com/gofiber/fiber/v2/middleware/limiter"
 	utils "github.com/0187773933/Blogger/v1/utils"
 )
 
@@ -29,3 +31,33 @@ func ServeLoginPage( context *fiber.Ctx ) ( error ) {
 // 	// fmt.Println( "Sending -->" , url_key[ 1 ] , x_path )
 // 	return context.SendFile( ui_html_pages[ url_key[ 1 ] ] )
 // }
+
+var public_limiter = rate_limiter.New( rate_limiter.Config{
+	Max: 1 ,
+	Expiration: 1 * time.Second ,
+	KeyGenerator: func( c *fiber.Ctx ) string {
+		return c.Get( "x-forwarded-for" )
+	} ,
+	LimitReached: func( c *fiber.Ctx ) error {
+		ip_address := c.IP()
+		log_message := fmt.Sprintf( "%s === %s === %s === PUBLIC RATE LIMIT REACHED !!!" , ip_address , c.Method() , c.Path() );
+		fmt.Println( log_message )
+		c.Set( "Content-Type" , "text/html" )
+		return c.SendString( "<html><h1>loading ...</h1><script>setTimeout(function(){ window.location.reload(1); }, 6);</script></html>" )
+	} ,
+})
+
+var private_limiter = rate_limiter.New( rate_limiter.Config{
+	Max: 3 ,
+	Expiration: 1 * time.Second ,
+	KeyGenerator: func( c *fiber.Ctx ) string {
+		return c.Get( "x-forwarded-for" )
+	} ,
+	LimitReached: func( c *fiber.Ctx ) error {
+		ip_address := c.IP()
+		log_message := fmt.Sprintf( "%s === %s === %s === PUBLIC RATE LIMIT REACHED !!!" , ip_address , c.Method() , c.Path() );
+		fmt.Println( log_message )
+		c.Set( "Content-Type" , "text/html" )
+		return c.SendString( "<html><h1>loading ...</h1><script>setTimeout(function(){ window.location.reload(1); }, 6);</script></html>" )
+	} ,
+})
