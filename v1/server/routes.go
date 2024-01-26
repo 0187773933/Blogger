@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"time"
-	"bytes"
 	"strconv"
 	"io/ioutil"
 	"encoding/json"
@@ -195,37 +194,26 @@ func ( s *Server ) PostGetAll( context *fiber.Ctx ) ( error ) {
 	})
 }
 
-func ( s *Server ) PostGetInRange( context *fiber.Ctx ) error {
-	start_unix_param := context.Params( "start" )
-	stop_unix_param := context.Params( "stop" )
-	start_unix_int64 , _ := strconv.ParseInt( start_unix_param , 10 , 64 )
-	stop_unix_int64 , _ := strconv.ParseInt( stop_unix_param , 10 , 64 )
-	start_unix_time := time.Unix( start_unix_int64 , 0 )
-	stop_unix_time := time.Unix( stop_unix_int64 , 0 )
-	start_ulid_time_stamp := ulid.Timestamp( start_unix_time )
-	stop_ulid_time_stamp := ulid.Timestamp( stop_unix_time )
-	start_ulid , _ := ulid.New( start_ulid_time_stamp , nil )
-	stop_ulid , _ := ulid.New( stop_ulid_time_stamp , nil )
-	start_ulid_string := start_ulid.String()
-	stop_ulid_string := stop_ulid.String()
-	min := []byte( start_ulid_string )
-	max := []byte( stop_ulid_string )
-    var posts []types.Post
-    s.DB.View( func( tx *bolt.Tx ) error {
-        c := tx.Bucket( []byte( "posts" ) ).Cursor()
-        for k , v := c.Seek( min ); k != nil && bytes.Compare( k , max ) <= 0; k , v = c.Next() {
-            var p types.Post
-            json.Unmarshal( v , &p )
-            posts = append( posts , p )
-        }
-        return nil
-    })
-    return context.JSON( fiber.Map{
-        "url": "/post/get/range" ,
-        "method": "GET" ,
-        "posts": posts ,
-        "result": true ,
-    })
+func ( s *Server ) PostGetRangeViaUNIX( context *fiber.Ctx ) error {
+	start := utils.UnixToULID( context.Params( "start" ) )
+	stop := utils.UnixToULID( context.Params( "stop" ) )
+	posts := s.PostGetRange( start , stop )
+	return context.JSON( fiber.Map{
+		"url": "/post/get/range" ,
+		"method": "GET" ,
+		"posts": posts ,
+		"result": true ,
+	})
+}
+
+func ( s *Server ) PostGetRangeViaULID( context *fiber.Ctx ) error {
+	posts := s.PostGetRange( context.Params( "start" ) , context.Params( "stop" ) )
+	return context.JSON( fiber.Map{
+		"url": "/post/get/range" ,
+		"method": "GET" ,
+		"posts": posts ,
+		"result": true ,
+	})
 }
 
 func ( s *Server ) SetupRoutes() {
@@ -239,7 +227,8 @@ func ( s *Server ) SetupRoutes() {
 	s.FiberApp.Post( "/post" , private_limiter , validate_session_mw , s.Post )
 	s.FiberApp.Get( "/post/:seq_id" , private_limiter , validate_session_mw , s.PostGetViaSeqID )
 	s.FiberApp.Get( "/post/get/all" , private_limiter , validate_session_mw , s.PostGetAll )
-	s.FiberApp.Get( "/post/get/range/:start/:stop" , private_limiter , validate_session_mw , s.PostGetInRange )
+	s.FiberApp.Get( "/post/get/range/unix/:start/:stop" , private_limiter , validate_session_mw , s.PostGetRangeViaUNIX )
+	s.FiberApp.Get( "/post/get/range/ulid/:start/:stop" , private_limiter , validate_session_mw , s.PostGetRangeViaULID )
 	// s.FiberApp.Get( "/post/:uuid" , private_limiter , validate_session_mw , s.PostGetViaUUID )
 
 	// Uploads

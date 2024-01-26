@@ -5,6 +5,8 @@ import (
 	"time"
 	"strings"
 	"unicode"
+	"strconv"
+	ulid "github.com/oklog/ulid/v2"
 	binary "encoding/binary"
 	json "encoding/json"
 	// "strings"
@@ -75,6 +77,15 @@ func SanitizeInputString( input string ) ( result string ) {
 func WriteJSON( filePath string , data interface{} ) {
 	file, _ := json.MarshalIndent( data , "" , " " )
 	_ = ioutil.WriteFile( filePath , file , 0644 )
+}
+
+func UnixToULID( input_string string ) ( result string ) {
+	x_input_in64 , _ := strconv.ParseInt( input_string , 10 , 64 )
+	x_unix_time := time.Unix( x_input_in64 , 0 )
+	x_ulid_time_stamp := ulid.Timestamp( x_unix_time )
+	x_ulid , _ := ulid.New( x_ulid_time_stamp , nil )
+	result = x_ulid.String()
+	return
 }
 
 func ParseConfig( file_path string ) ( result types.ConfigFile ) {
