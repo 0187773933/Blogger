@@ -27,9 +27,9 @@ func serve_failed_attempt( context *fiber.Ctx ) ( error ) {
 	// return context.SendFile( "./v1/server/html/admin_login.html" )
 }
 
-func Logout( context *fiber.Ctx ) ( error ) {
+func ( s *Server ) Logout( context *fiber.Ctx ) ( error ) {
 	context.Cookie( &fiber.Cookie{
-		Name: GlobalConfig.ServerCookieName ,
+		Name: s.Config.ServerCookieName ,
 		Value: "" ,
 		Expires: time.Now().Add( -time.Hour ) , // set the expiration to the past
 		HTTPOnly: true ,
