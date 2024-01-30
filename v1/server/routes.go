@@ -38,6 +38,6 @@ func ( s *Server ) SetupRoutes() {
 	// Serving Dynamic Static Routes and Pages
 	// we are doing this LAST in a catch all.
 	// other ways like using only 1 handler and then the look up
-	s.FiberApp.Get( "/*" , public_limiter , s.StaticHandler )
+	s.FiberApp.Get( "/*" , public_limiter , s.PageHandler )
 
 }

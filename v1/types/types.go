@@ -37,3 +37,15 @@ type FileData struct {
 	FileName string
 	Data []byte
 }
+
+type Page struct {
+	// UUID string `json:"uuid"`
+	// ULID string `json:"ulid"`
+	// Date string `json:"date"`
+	// Type string `json:"type"`
+	// HTML string `json:"html"`
+	HTMLB64 string `json:"html_b64"`
+	URL string `json:"url"`
+	// Text string `json:"text"`
+	// MD []string `json:"mark_down"`
+}
