@@ -21,8 +21,8 @@ func ( s *Server ) Home( context *fiber.Ctx ) ( error ) {
 }
 
 // Adds { key: HTML_STRING-b64 } to static-routes
-func ( s *Server ) PageAdd( context *fiber.Ctx ) ( error ) {
-	log.Debug( "PageAdd()" )
+func ( s *Server ) PageAddPost( context *fiber.Ctx ) ( error ) {
+	log.Debug( "PageAddPost()" )
 	context_body := context.Body()
 	var p types.Page
 	json.Unmarshal( context_body , &p )
@@ -35,6 +35,11 @@ func ( s *Server ) PageAdd( context *fiber.Ctx ) ( error ) {
 		"url": p.URL ,
 		"result": true ,
 	})
+}
+
+func ( s *Server ) PageAddGet( context *fiber.Ctx ) ( error ) {
+	// log.Debug( "PageAddGet()" )
+	return context.SendFile( "./v1/server/html/page_add.html" )
 }
 
 func ( s *Server ) PageGet( context *fiber.Ctx ) ( error ) {
