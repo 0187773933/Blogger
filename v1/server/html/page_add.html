@@ -21,9 +21,19 @@
 		<div class="container-fluid">
 			<br>
 			<div class="row">
-				<div class="col-sm">
-					<center><h1>Add New Page</h1></center>
+				<div class="col-xl-4 col-md-3"></div>
+				<div class="col-xl-4 col-md-6 col-12">
+					<input type="text" class="form-control" placeholder="Page URL" id="page-url" required>
 				</div>
+				<div class="col-xl-4 col-md-3"></div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-xl-4 col-md-3"></div>
+				<div class="col-xl-4 col-md-6 col-12">
+					<button type="submit" class="btn btn-success" onClick="on_submit()">Save</button>
+				</div>
+				<div class="col-xl-4 col-md-3"></div>
 			</div>
 			<br>
 			<div class="row">
@@ -36,15 +46,37 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			function test_page_add( post_data ) {
+			function page_add( post_data ) {
 				return new Promise( async function( resolve , reject ) {
 					try {
-						let response = await fetch( "/page  /add" , {
+						let response = await fetch( "/page/add" , {
 							method: "POST" ,
 							body: JSON.stringify( post_data ) ,
 						});
 						let response_json = await response.json();
 						resolve( response_json );
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			function on_submit( event ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						if ( event ) { event.preventDefault(); }
+						console.log( "on_submit()" );
+						let page_url = document.getElementById( "page-url" ).value;
+						console.log( "page_url ===" , page_url );
+						let page_html = window.X_QUILL.root.innerHTML;
+						console.log( "page_html ===" , page_html );
+						let page_html_b64 = btoa( page_html );
+						console.log( page_html_b64 );
+						let result = await page_add({
+							"url": page_url ,
+							"html_b64": page_html_b64
+						})
+						console.log( result );
+						resolve();
 						return;
 					}
 					catch( error ) { console.log( error ); resolve( false ); return; }
@@ -57,6 +89,8 @@
 				// https://codesandbox.io/p/sandbox/react-quill-full-toolbar-j569z
 				// https://medium.com/@mircea.calugaru/react-quill-editor-with-full-toolbar-options-and-custom-buttons-undo-redo-176d79f8d375
 				// add this stuff ^^^ , seriously how hard is it to provide 1 example
+
+				// need a custom html-block , it just embeds raw html
 				const quill = new Quill( "#editor" , {
 					modules: {
 						toolbar: [
@@ -82,6 +116,7 @@
 					placeholder: "New Text for a New Page" ,
 					theme: "snow" ,
 				});
+				window.X_QUILL = quill;
 			})();
 		</script>
 	</body>
