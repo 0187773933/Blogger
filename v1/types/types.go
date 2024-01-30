@@ -39,7 +39,7 @@ type FileData struct {
 }
 
 type Page struct {
-	// UUID string `json:"uuid"`
+	UUID string `json:"uuid"`
 	// ULID string `json:"ulid"`
 	// Date string `json:"date"`
 	// Type string `json:"type"`

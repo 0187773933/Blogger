@@ -26,10 +26,26 @@ func ( s *Server ) PageAdd( context *fiber.Ctx ) ( error ) {
 	context_body := context.Body()
 	var p types.Page
 	json.Unmarshal( context_body , &p )
-	log.Debug( fmt.Sprintf( "Setting URL : %s" , p.URL ) )
+	// p.UUID = uuid.NewV4().String()
+	log.Debug( fmt.Sprintf( "Storing Content for URL : %s" , p.URL ) )
 	s.Set( "pages" , p.URL ,  p.HTMLB64 )
 	return context.JSON( fiber.Map{
 		"route": "/page/add" ,
+		// "uuid": p.UUID ,
+		"url": p.URL ,
+		"result": true ,
+	})
+}
+
+func ( s *Server ) PageGet( context *fiber.Ctx ) ( error ) {
+	log.Debug( "PageGet()" )
+	// x_url := context.Params( "url" )
+	x_url := context.Query( "url" )
+	page_html_b64 := s.Get( "pages" , x_url )
+	return context.JSON( fiber.Map{
+		"route": "/page/get/:url" ,
+		"url": x_url ,
+		"html_b64": page_html_b64 ,
 		"result": true ,
 	})
 }
@@ -41,18 +57,18 @@ func ( s *Server ) PageAdd( context *fiber.Ctx ) ( error ) {
 // second lookup == GET JSON request sent by html parent for actual content
 // or we could just render parent template as catch all , and then do 1 lookup for if any content exists ?
 func ( s *Server ) PageHandler( context *fiber.Ctx ) ( error ) {
-	log.Debug( "PageHandler()" )
 	sent_path := context.Path()
-	sent_queries := context.Queries()
-	page_html := s.Get( "pages" , sent_path )
-	if page_html == "" {
-		return context.JSON( fiber.Map{
-			"route": "/*" ,
-			"sent_path": sent_path ,
-			"sent_queries": sent_queries ,
-			"page_html": page_html ,
-			"result": false ,
-		})
-	}
+	log.Debug( fmt.Sprintf( "PageHandler( %s )" , sent_path ) )
+	// sent_queries := context.Queries()
+	// page_html := s.Get( "pages" , sent_path )
+	// if page_html == "" {
+	// 	return context.JSON( fiber.Map{
+	// 		"route": "/*" ,
+	// 		"sent_path": sent_path ,
+	// 		"sent_queries": sent_queries ,
+	// 		"page_html": page_html ,
+	// 		"result": false ,
+	// 	})
+	// }
 	return context.SendFile( "./v1/server/html/page.html" )
 }

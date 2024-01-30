@@ -6,6 +6,29 @@
 	<title>Page Renderer</title>
 </head>
 <body>
-	<h1>I guess we have static html stuff saved on this route</h1>
+	<div id="static-b64">
+		<span>Loading ...</span>
+	</div>
+	<script type="text/javascript">
+		function test_get_stored_url_path_html_b64() {
+			return new Promise( async function( resolve , reject ) {
+				try {
+					let current_url_path = window.location.pathname;
+					let url = `/page/get?url=${current_url_path}`;
+					console.log( url );
+					let response = await fetch( url , { method: "GET" });
+					let response_json = await response.json();
+					resolve( response_json );
+					return;
+				}
+				catch( error ) { console.log( error ); resolve( false ); return; }
+			});
+		}
+		( async ()=> {
+			let x = await test_get_stored_url_path_html_b64();
+			console.log( x );
+			document.getElementById( "static-b64" ).innerHTML = atob( x.html_b64 );
+		})();
+	</script>
 </body>
 </html>
