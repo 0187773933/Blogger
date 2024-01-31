@@ -29,6 +29,7 @@ func ( s *Server ) PageAddPost( context *fiber.Ctx ) ( error ) {
 	// p.UUID = uuid.NewV4().String()
 	log.Debug( fmt.Sprintf( "Storing Content for URL : %s" , p.URL ) )
 	s.Set( "pages" , p.URL ,  p.HTMLB64 )
+	fmt.Println( p.HTMLB64 )
 	return context.JSON( fiber.Map{
 		"route": "/page/add" ,
 		// "uuid": p.UUID ,

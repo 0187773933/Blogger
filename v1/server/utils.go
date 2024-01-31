@@ -87,8 +87,9 @@ var private_limiter = rate_limiter.New( rate_limiter.Config{
 func ( s *Server ) Set( bucket_name string , key string , value string ) {
 	s.DB.Update( func( tx *bolt.Tx ) error {
 		b , err := tx.CreateBucketIfNotExists( []byte( bucket_name ) )
-		if err != nil { return nil }
-		b.Put( []byte( key ) , []byte( value ) )
+		if err != nil { log.Debug( err ); return nil }
+		err = b.Put( []byte( key ) , []byte( value ) )
+		if err != nil { log.Debug( err ); return nil }
 		return nil
 	})
 	return
