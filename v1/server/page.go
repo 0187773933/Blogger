@@ -38,9 +38,9 @@ func ( s *Server ) PageAddPost( context *fiber.Ctx ) ( error ) {
 	})
 }
 
-func ( s *Server ) PageAddGet( context *fiber.Ctx ) ( error ) {
+func ( s *Server ) PageAddGetWYSIWYG( context *fiber.Ctx ) ( error ) {
 	// log.Debug( "PageAddGet()" )
-	return context.SendFile( "./v1/server/html/page_add.html" )
+	return context.SendFile( "./v1/server/html/page_add_wysiwyg.html" )
 }
 
 func ( s *Server ) PageGet( context *fiber.Ctx ) ( error ) {
