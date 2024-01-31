@@ -93,13 +93,6 @@
 							"url": page_url ,
 							"html_b64": page_html_b64
 						});
-
-						// let page_html_encoded = encodeURIComponent( page_html );
-						// console.log( page_html_encoded );
-						// let page_html_b64 = btoa( unescape( page_html_encoded ) );
-						// // let page_html_b64 = btoa( page_html );
-
-
 						console.log( result );
 						resolve();
 						return;
@@ -127,6 +120,12 @@
 				// TODO
 				// need a custom html-block , it just embeds raw html
 				// https://medium.com/@mircea.calugaru/react-quill-editor-with-full-toolbar-options-and-custom-buttons-undo-redo-176d79f8d375
+				// https://stackoverflow.com/questions/37796409/is-it-possible-to-create-a-custom-format-blot-with-complex-substructure
+				// https://github.com/quilljs/quill/issues/2611
+				// https://blog.logrocket.com/build-a-wysiwyg-text-editor-using-quill/
+
+				// https://stackoverflow.com/questions/57002748/insert-html-with-style-into-a-quilljs
+
 				const tool_bar_options = [
 					[ 'bold' , 'italic' , 'underline' , 'strike' ] , // toggled buttons
 					[ "blockquote" , "code-block" ] ,
@@ -140,9 +139,14 @@
 					[ { 'color': [] } , { 'background': [] } ] ,
 					[ { 'font': [] } ] ,
 					[ { 'align': [] } ] ,
-					[ "link" , "image" , "video" , "formula" ] ,
+					[ "link" , "image" , "video" , "formula" , "rawhtml" ] ,
 					[ 'clean' ] // remove formatting button
 				];
+
+				// let raw_html_module = Quill.import( "core/module" );
+				let raw_html_module = Quill.import( "formats/formula" );
+				Quill.register( "formats/rawhtml" , raw_html_module );
+
 				const quill = new Quill( "#editor" , {
 					modules: {
 						toolbar: tool_bar_options ,
@@ -150,6 +154,13 @@
 					placeholder: "New Text for a New Page" ,
 					theme: "snow" ,
 				});
+
+				quill.clipboard.dangerouslyPasteHTML( 0 , `<iframe width="560" height="315" src="https://www.youtube.com/embed/unJm2ouaAxo?si=IBRk04BEuWtJE5Ey" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>` );
+
+				quill.clipboard.dangerouslyPasteHTML( 0 , '<p><span style="color: red;">Hello World!</span></p>' );
+
+				// var toolbar = quill.getModule('toolbar')
+				// toolbar.addHandler( 'image' , showImageUI )
 				window.X_QUILL = quill;
 			})();
 		</script>
