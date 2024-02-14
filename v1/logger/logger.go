@@ -7,8 +7,8 @@ import (
 	"io"
 	// "encoding/json"
 	// bolt_api "github.com/boltdb/bolt"
-	types "github.com/0187773933/Blogger/v1/types"
-	utils "github.com/0187773933/Blogger/v1/utils"
+	types "github.com/0187773933/FileServer/v1/types"
+	utils "github.com/0187773933/FileServer/v1/utils"
 	logrus "github.com/sirupsen/logrus"
 	// ulid "github.com/oklog/ulid/v2"
 )

@@ -7,10 +7,10 @@ import (
 	"os/signal"
 	"syscall"
 	"path/filepath"
-	utils "github.com/0187773933/Blogger/v1/utils"
-	server "github.com/0187773933/Blogger/v1/server"
+	utils "github.com/0187773933/FileServer/v1/utils"
+	server "github.com/0187773933/FileServer/v1/server"
 	bolt "github.com/boltdb/bolt"
-	logger "github.com/0187773933/Blogger/v1/logger"
+	logger "github.com/0187773933/FileServer/v1/logger"
 )
 
 var s server.Server
@@ -43,8 +43,8 @@ func main() {
 
 	SetupCloseHandler()
 
-	// utils.GenerateNewKeys()
-	s = server.New( DB , config )
-	s.Start()
+	utils.GenerateNewKeys()
+	// s = server.New( DB , config )
+	// s.Start()6
 
 }

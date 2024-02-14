@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo docker build -t "public-blogger-server" .
+sudo docker build -t "public-file-server" .

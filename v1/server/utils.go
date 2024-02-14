@@ -10,7 +10,7 @@ import (
 	ical "github.com/emersion/go-ical"
 	fiber "github.com/gofiber/fiber/v2"
 	rate_limiter "github.com/gofiber/fiber/v2/middleware/limiter"
-	utils "github.com/0187773933/Blogger/v1/utils"
+	utils "github.com/0187773933/FileServer/v1/utils"
 )
 
 func ICalGetTest() ( result string ) {

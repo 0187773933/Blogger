@@ -8,9 +8,9 @@ import (
 	ulid "github.com/oklog/ulid/v2"
 	uuid "github.com/satori/go.uuid"
 	bolt "github.com/boltdb/bolt"
-	types "github.com/0187773933/Blogger/v1/types"
+	types "github.com/0187773933/FileServer/v1/types"
 	fiber "github.com/gofiber/fiber/v2"
-	utils "github.com/0187773933/Blogger/v1/utils"
+	utils "github.com/0187773933/FileServer/v1/utils"
 )
 
 func ( s *Server ) PostGetRange( min string , max string ) ( result []types.Post ) {

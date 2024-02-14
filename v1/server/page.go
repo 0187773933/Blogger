@@ -4,7 +4,7 @@ import (
 	"fmt"
 	json "encoding/json"
 	fiber "github.com/gofiber/fiber/v2"
-	types "github.com/0187773933/Blogger/v1/types"
+	types "github.com/0187773933/FileServer/v1/types"
 	// bolt "github.com/boltdb/bolt"
 )
 

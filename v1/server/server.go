@@ -7,8 +7,8 @@ import (
 	fiber_cookie "github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	fiber_cors "github.com/gofiber/fiber/v2/middleware/cors"
 	favicon "github.com/gofiber/fiber/v2/middleware/favicon"
-	types "github.com/0187773933/Blogger/v1/types"
-	logger "github.com/0187773933/Blogger/v1/logger"
+	types "github.com/0187773933/FileServer/v1/types"
+	logger "github.com/0187773933/FileServer/v1/logger"
 )
 
 var GlobalConfig *types.ConfigFile
