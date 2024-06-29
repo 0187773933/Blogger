@@ -14,6 +14,8 @@ type ConfigFile struct {
 	TimeZone string `yaml:"time_zone"`
 	BoltDBPath string `yaml:"bolt_db_path"`
 	BoltDBEncryptionKey string `yaml:"bolt_db_encryption_key"`
+	UploadsSavePath string `yaml:"uploads_save_path"`
+	ImagesSavePath string `yaml:"images_save_path"`
 }
 
 // type PostTypes  struct {

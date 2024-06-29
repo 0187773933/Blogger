@@ -39,8 +39,15 @@ func ( s *Server ) PageAddPost( context *fiber.Ctx ) ( error ) {
 }
 
 func ( s *Server ) PageAddGetWYSIWYG( context *fiber.Ctx ) ( error ) {
-	// log.Debug( "PageAddGet()" )
 	return context.SendFile( "./v1/server/html/page_add_wysiwyg.html" )
+}
+
+func ( s *Server ) PageAddGetWYSIWYG2( context *fiber.Ctx ) ( error ) {
+	return context.SendFile( "./v1/server/html/page_add_wysiwyg_2.html" )
+}
+
+func ( s *Server ) PageAddGetWYSIWYG3( context *fiber.Ctx ) ( error ) {
+	return context.SendFile( "./v1/server/html/page_add_wysiwyg_3.html" )
 }
 
 func ( s *Server ) PageGet( context *fiber.Ctx ) ( error ) {

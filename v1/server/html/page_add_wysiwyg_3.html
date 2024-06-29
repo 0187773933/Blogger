@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Custom Blogger Server</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" href="">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" integrity="sha256-ymhDBwPE9ZYOkHNYZ8bpTSm1o943EH2BAOWjAQB+nm4=" crossorigin="anonymous"></script> -->
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha256-3ISyluw+iE3gkxWPdg/Z1Ftser5YtTgVV/ThOPRqWK4=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js" integrity="sha256-8MoD3xlLjD1gF/9FXbag75iFeQVmP6MRps3teIsVNAs=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha256-nLjaz8CGwpZsnsS6VPSi3EO3y+KzPOwaJ0PYhsf7R6c=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="/cdn/summernote/summernote-bs5.min.css">
+		<script src="/cdn/summernote/summernote-bs5.js"></script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<br>
+			<div class="row">
+				<div class="col-xl-4 col-md-3"></div>
+				<div class="col-xl-4 col-md-6 col-12">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Page URL" id="page-url" required>
+						&nbsp;
+						<div class="input-group-append">
+							<button type="submit" class="btn btn-success" onClick="on_submit()">Save</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-xl-4 col-md-3"></div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-xl-2"></div>
+				<div class="col-xl-8 col-12">
+					<div id="summernote"></div>
+				</div>
+				<div class="col-xl-2"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function page_add( post_data ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						let response = await fetch( "/page/add" , {
+							method: "POST" ,
+							body: JSON.stringify( post_data ) ,
+						});
+						let response_json = await response.json();
+						resolve( response_json );
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			function upload_image( image ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						let data = new FormData();
+						data.append( "file" , image );
+						let response = await fetch( "/upload-image" , {
+							method: "POST" ,
+							body: data ,
+							cache: "no-cache" ,
+							credentials: "same-origin" ,
+							headers: {
+								"Accept": "application/json"
+							}
+						});
+						let response_json = await response.json();
+						resolve( response_json );
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			function html_to_b64_string( html_string ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						let page_html_blob = new Blob( [ html_string ] , { type: 'text/html' } );
+						let reader = new FileReader();
+						reader.onloadend = function() {
+							let page_html_b64 = reader.result.split( ',' )[ 1 ];
+							resolve( page_html_b64 );
+							return;
+						};
+						reader.readAsDataURL( page_html_blob );
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			function editor_export() {
+				let html = $( "#summernote" ).summernote( "code" );
+				return html;
+			}
+			function open_new_url() {
+
+			}
+			function on_submit( event ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						if ( event ) { event.preventDefault(); }
+						console.log( "on_submit()" );
+						let page_url = document.getElementById( "page-url" ).value;
+						if ( !page_url.startsWith( "/" ) ) {
+							page_url = "/" + page_url;
+						}
+						console.log( "page_url ===" , page_url );
+						const editor_html = editor_export();
+						console.log( editor_html );
+						const editor_html_b64 = await html_to_b64_string( editor_html )
+						console.log( editor_html_b64 );
+						let result = await page_add({
+							"url": page_url ,
+							"html_b64": editor_html_b64
+						});
+						window.EDITING_URL = result.url;
+						window.open( window.EDITING_URL , "_blank" );
+						resolve();
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			function render_katex() {
+				renderMathInElement( document.body , {
+					strict: "ignore" ,
+					delimiters: [ // https://stackoverflow.com/a/45301641
+						{ left: "$$" , right: "$$" , display: true } ,
+						// { left: "\[" , right: "\]" , display: true } ,
+						{ left: "$" , right: "$" , display: false } ,
+						// { left: "\(" , right: "\)" , display: false }
+					]
+				});
+			}
+
+			$( document ).ready(function() {
+				// https://summernote.org
+				// https://github.com/summernote/summernote
+				// https://summernote.org/plugins
+				// https://github.com/summernote/summernote/blob/9912d3ec92fae7d35c3669ef79006402aa8a5bb0/src/styles/bs5/summernote-bs5.js
+				// https://github.com/summernote/summernote/pull/4604/files/9912d3ec92fae7d35c3669ef79006402aa8a5bb0
+				// https://github.com/DennisSuitters/summernote-image-captionit
+				// https://github.com/DennisSuitters/summernote-image-attributes
+				$( "#summernote" ).summernote({
+					tabsize: 4 ,
+					height: 400 ,
+					callbacks: {
+						onImageUpload: async function( files , editor , welEditable ) {
+							let image_data = await upload_image( files[ 0 ] );
+							if ( image_data[ "success" ] !== 1 ) { return ""; }
+							let image_url = image_data[ "file" ][ "url" ];
+							console.log( image_data );
+							console.log( image_url );
+							$( "#summernote" ).summernote( "insertImage" , image_url );
+							return;
+						}
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -29,4 +29,4 @@ fi
 git remote add origin git@github.com:0187773933/Blogger.git
 
 git push origin --tags
-git push origin master -f
+git push origin master

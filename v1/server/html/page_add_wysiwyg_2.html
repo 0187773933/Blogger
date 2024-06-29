@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Custom Blogger Server</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" href="">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" integrity="sha256-ymhDBwPE9ZYOkHNYZ8bpTSm1o943EH2BAOWjAQB+nm4=" crossorigin="anonymous"></script> -->
+		<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" integrity="sha256-jyIuRMWD+rz7LdpWfybO8U6DA65JCVkjgrt31FFsnAE=" crossorigin="anonymous"> -->
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha256-3ISyluw+iE3gkxWPdg/Z1Ftser5YtTgVV/ThOPRqWK4=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js" integrity="sha256-8MoD3xlLjD1gF/9FXbag75iFeQVmP6MRps3teIsVNAs=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha256-nLjaz8CGwpZsnsS6VPSi3EO3y+KzPOwaJ0PYhsf7R6c=" crossorigin="anonymous"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script><!-- Header -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest"></script><!-- Image -->
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-image-with-link@1.0.8/dist/image.umd.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/attaches@latest"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script><!-- Delimiter -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script><!-- List -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest"></script><!-- List -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script><!-- Checklist -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script><!-- Quote -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script><!-- Code -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script><!-- Embed -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script><!-- Table -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/link@latest"></script><!-- Link -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest"></script><!-- Warning -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script><!-- Marker -->
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script><!-- Inline Code -->
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-html@3.4.3/build/edjsHTML.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@2.5.0/dist/raw.umd.min.js"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/@calumk/editorjs-columns@0.3.2/dist/editorjs-columns.bundle.min.js"></script> -->
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-hyperlink@1.0.6/dist/bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-paragraph-with-alignment@3.0.0/dist/bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-undo@2.0.28/dist/bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@sotaproject/strikethrough@1.0.1/dist/bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-header-with-alignment@1.0.1/dist/bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-style@3.0.3/dist/index.min.js"></script>
+<!-- 		<script src="https://cdn.jsdelivr.net/npm/editorjs-inline-font-size-tool@1.0.1/dist/bundle.min.js"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editorjs-inline-font-size-tool@1.0.1/src/index.min.css"> -->
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-layout@1.2.5/dist/index.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-break-line@1.0.10/dist/bundle.min.js"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/editorjs-tooltip@1.2.2/dist/bundle.min.js"></script> -->
+		<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editorjs-tooltip@1.2.2/src/index.min.css"> -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/@hammaadhrasheedh/editorjs-iframe@1.0.21/dist/bundle.min.js"></script> -->
+		<script src="https://cdn.jsdelivr.net/npm/editorjs-indent-tune@1.3.0/dist/bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.29.1/dist/editorjs.umd.min.js"></script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<br>
+			<div class="row">
+				<div class="col-xl-4 col-md-3"></div>
+				<div class="col-xl-4 col-md-6 col-12">
+					<input type="text" class="form-control" placeholder="Page URL" id="page-url" required>
+				</div>
+				<div class="col-xl-4 col-md-3"></div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-xl-4 col-md-3"></div>
+				<div class="col-xl-4 col-md-6 col-12">
+					<button type="submit" class="btn btn-success" onClick="on_submit()">Save</button>
+					<!-- Todo , toggle these views , and add raw editor -->
+					<button type="submit" class="btn btn-warning" onClick="">HTML</button>
+					<!-- <button type="submit" class="btn btn-warning" onClick="">Plain</button> -->
+				</div>
+				<div class="col-xl-4 col-md-3"></div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-xl-2"></div>
+				<div class="col-xl-8 col-12">
+					<div id="editorjs" style="border: 1px solid black;"></div>
+				</div>
+				<div class="col-xl-2"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function page_add( post_data ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						let response = await fetch( "/page/add" , {
+							method: "POST" ,
+							body: JSON.stringify( post_data ) ,
+						});
+						let response_json = await response.json();
+						resolve( response_json );
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			function editor_js_export() {
+				return new Promise( function( resolve , reject ) {
+					try {
+						window.EDITOR_JS.save().then( saved_data => {
+							let j = JSON.stringify( saved_data , null , 4 );
+							resolve( j );
+							return;
+						})
+					}
+					catch( error ) { console.log( error ); resolve( {} ); return; }
+				});
+			}
+			function on_submit( event ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						if ( event ) { event.preventDefault(); }
+						console.log( "on_submit()" );
+						let page_url = document.getElementById( "page-url" ).value;
+						if ( !page_url.startsWith( "/" ) ) {
+							page_url = "/" + page_url;
+						}
+						console.log( "page_url ===" , page_url );
+						let editor_blocks_json = await editor_js_export();
+						console.log( editor_blocks_json );
+
+						// i guess we don't even want this in editor_js ??
+						const editorData = await window.EDITOR_JS.save()
+						const edjsParser = edjsHTML();
+						const html = edjsParser.parse(editorData);
+						console.log( html );
+
+						// let result = await page_add({
+						// 	"url": page_url ,
+						// 	"html_b64": page_html_b64
+						// });
+						// console.log( result );
+						resolve();
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			function render_katex() {
+				renderMathInElement( document.body , {
+					strict: "ignore" ,
+					delimiters: [ // https://stackoverflow.com/a/45301641
+						{ left: "$$" , right: "$$" , display: true } ,
+						// { left: "\[" , right: "\]" , display: true } ,
+						{ left: "$" , right: "$" , display: false } ,
+						// { left: "\(" , right: "\)" , display: false }
+					]
+				});
+			}
+			async function init() {
+				// https://github.com/codex-team/editor.js
+				// https://github.com/editor-js/awesome-editorjs
+				// https://github.com/codex-team/editor.js/blob/next/example/example.html
+				// https://github.com/codex-team/editor.js/blob/next/example/example-rtl.html
+
+				// Maybies ??
+				// https://www.jsdelivr.com/package/npm/editorjs-blocks-react-renderer
+				// https://www.jsdelivr.com/package/npm/editorjs-drag-drop
+				// https://www.jsdelivr.com/package/npm/@editorjs/text-variant-tune
+				// https://www.jsdelivr.com/package/npm/editorjs-mermaid
+				// https://www.jsdelivr.com/package/npm/@alkhipce/editorjs-aitext
+				// https://www.jsdelivr.com/package/npm/editorjs-social-post-plugin
+				// https://www.jsdelivr.com/package/npm/@vietlongn/editorjs-carousel
+				window.EDITOR_JS = new EditorJS({
+					holder: "editorjs" ,
+					autofocus: true ,
+					onReady: () => {
+						new Undo({ editor: window.EDITOR_JS } )
+					} ,
+					tunes: ['indentTune'],
+					tools: {
+						header: {
+							class: Header ,
+							config: {
+								placeholder: 'Enter a header',
+								levels: [1,2, 3, 4,5,6],
+								defaultLevel: 3,
+								defaultAlignment: 'center'
+							}
+						} ,
+						paragraph: {
+							class: Paragraph,
+							inlineToolbar: true,
+						},
+						indentTune: IndentPlugin,
+						// list: List ,
+						list: {
+							class: NestedList,
+							inlineToolbar: true,
+							config: {
+								defaultStyle: 'unordered'
+							},
+						},
+						image: {
+							class: ImageTool,
+							config: {
+								endpoints: {
+									byFile: '/upload-image', // Your server file upload endpoint
+									// byUrl: 'http://localhost:3000/fetchUrl' // Your endpoint that provides uploading by URL
+								},
+								field: 'file', // Form field for uploaded file
+								types: 'image/*' // Accepted MIME types
+							}
+						},
+						attaches: {
+							class: AttachesTool,
+							config: {
+								endpoint: '/upload', // Your server file upload endpoint
+								field: 'file', // Form field for uploaded file
+								types: '*/*', // Accepted MIME types
+								// additionalRequestHeaders: { // Optional: add custom request headers
+								// 	'X-Custom-Header': 'value'
+								// }
+							}
+						} ,
+						// fontSize: FontSize ,
+						breakLine: {
+							class: BreakLine ,
+							inlineToolbar: true ,
+							shortcut: 'CMD+SHIFT+ENTER' ,
+						},
+						// tooltip: {
+						// 	class: Tooltip,
+						// 	config: {
+						// 		location: 'left',
+						// 		underline: true,
+						// 		placeholder: 'Enter a tooltip',
+						// 		highlightColor: '#FFEFD5',
+						// 		backgroundColor: '#154360',
+						// 		textColor: '#FDFEFE',
+						// 		holder: 'editorjs',
+						// 	}
+						// } ,
+						quote: Quote ,
+						code: CodeTool ,
+						embed: Embed ,
+						table: Table ,
+						raw: RawTool,
+						// ColorPicker: TextColor,
+						style: EditorJSStyle.StyleInlineTool,
+						hyperlink: {
+							class: Hyperlink,
+							config: {
+								shortcut: 'CMD+L',
+								target: '_blank',
+								rel: 'nofollow',
+								availableTargets: ['_blank', '_self'],
+								availableRels: ['author', 'noreferrer'],
+								validate: false,
+							}
+						},
+						// iframe: iframe,
+						strikethrough: Strikethrough ,
+						delimiter: Delimiter ,
+						warning: Warning ,
+						// linkTool: LinkTool ,
+						marker: Marker ,
+						checklist: Checklist ,
+						// personality: Personality ,
+						inlineCode: InlineCode ,
+						// simpleImage: SimpleImage
+
+
+		// it works , but can't easily parse and create all generic types
+		// https://github.com/hata6502/editorjs-layout/blob/main/docs/index.html
+        // layout: {
+        //   class: EditorJSLayout.LayoutBlockTool,
+        //   config: {
+        //     EditorJS,
+        //     enableLayoutEditing: false,
+        //     enableLayoutSaving: true,
+        //     initialData: {
+        //       itemContent: {
+        //         1: {
+        //           blocks: [],
+        //         },
+        //       },
+        //       layout: {
+        //         type: "container",
+        //         id: "",
+        //         className: "",
+        //         style: "border: 1px solid #000000; ",
+        //         children: [
+        //           {
+        //             type: "item",
+        //             id: "",
+        //             className: "",
+        //             style: "border: 1px solid #000000; display: inline-block; ",
+        //             itemContentId: "1",
+        //           },
+        //         ],
+        //       },
+        //     },
+        //   },
+        // },
+
+        // twoColumns: {
+        //   class: EditorJSLayout.LayoutBlockTool,
+        //   config: {
+        //     EditorJS,
+        //     enableLayoutEditing: false,
+        //     enableLayoutSaving: false,
+        //     initialData: {
+        //       itemContent: {
+        //         1: {
+        //           blocks: [],
+        //         },
+        //         2: {
+        //           blocks: [],
+        //         },
+        //       },
+        //       layout: {
+        //         type: "container",
+        //         id: "",
+        //         className: "",
+        //         style:
+        //           "border: 1px solid #000000; display: flex; justify-content: space-around; padding: 16px; ",
+        //         children: [
+        //           {
+        //             type: "item",
+        //             id: "",
+        //             className: "",
+        //             style: "border: 1px solid #000000; padding: 8px; ",
+        //             itemContentId: "1",
+        //           },
+        //           {
+        //             type: "item",
+        //             id: "",
+        //             className: "",
+        //             style: "border: 1px solid #000000; padding: 8px; ",
+        //             itemContentId: "2",
+        //           },
+        //         ],
+        //       },
+        //     },
+        //   },
+        //   shortcut: "CMD+2",
+        //   toolbox: {
+        //     icon: `
+        //       <svg xmlns='http://www.w3.org/2000/svg' width="16" height="16" viewBox='0 0 512 512'>
+        //         <rect x='128' y='128' width='336' height='336' rx='57' ry='57' fill='none' stroke='currentColor' stroke-linejoin='round' stroke-width='32'/>
+        //         <path d='M383.5 128l.5-24a56.16 56.16 0 00-56-56H112a64.19 64.19 0 00-64 64v216a56.16 56.16 0 0056 56h24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/>
+        //       </svg>
+        //     `,
+        //     title: "2 columns",
+        //   },
+        // },
+
+
+					}
+				});
+				await window.EDITOR_JS.isReady
+				console.log( window.EDITOR_JS );
+			}
+			( ()=> {
+				document.addEventListener( "DOMContentLoaded" , init );
+			})();
+		</script>
+	</body>
+</html>

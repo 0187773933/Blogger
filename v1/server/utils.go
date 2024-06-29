@@ -1,9 +1,11 @@
 package server
 
 import (
+	"os"
 	"fmt"
 	"time"
 	"bytes"
+	filepath "path/filepath"
 	// "strings"
 	// ical "github.com/arran4/golang-ical"
 	bolt "github.com/boltdb/bolt"
@@ -45,6 +47,20 @@ func ServeLoginPage( context *fiber.Ctx ) ( error ) {
 	return context.SendFile( "./v1/server/html/login.html" )
 }
 
+func FileExists( name string ) ( result bool ) {
+	result = false
+	_ , err := os.Stat( name )
+	if os.IsNotExist( err ) {
+		return
+	}
+	if err != nil {
+		return
+	}
+	result = true
+	return
+}
+
+
 // func ServeAuthenticatedPage( context *fiber.Ctx ) ( error ) {
 // 	if validate_admin_cookie( context ) == false { return serve_failed_attempt( context ) }
 // 	x_path := context.Route().Path
@@ -65,7 +81,7 @@ var public_limiter = rate_limiter.New( rate_limiter.Config{
 		log_message := fmt.Sprintf( "%s === %s === %s === PUBLIC RATE LIMIT REACHED !!!" , ip_address , c.Method() , c.Path() );
 		fmt.Println( log_message )
 		c.Set( "Content-Type" , "text/html" )
-		return c.SendString( "<html><h1>loading ...</h1><script>setTimeout(function(){ window.location.reload(1); }, 6);</script></html>" )
+		return c.SendString( "<html><h1>loading ...</h1><script>setTimeout(function(){ window.location.reload(1); }, 6000);</script></html>" )
 	} ,
 })
 
@@ -80,7 +96,7 @@ var private_limiter = rate_limiter.New( rate_limiter.Config{
 		log_message := fmt.Sprintf( "%s === %s === %s === PUBLIC RATE LIMIT REACHED !!!" , ip_address , c.Method() , c.Path() );
 		fmt.Println( log_message )
 		c.Set( "Content-Type" , "text/html" )
-		return c.SendString( "<html><h1>loading ...</h1><script>setTimeout(function(){ window.location.reload(1); }, 6);</script></html>" )
+		return c.SendString( "<html><h1>loading ...</h1><script>setTimeout(function(){ window.location.reload(1); }, 6000);</script></html>" )
 	} ,
 })
 
@@ -105,4 +121,27 @@ func ( s *Server ) Get( bucket_name string , key string ) ( result string ) {
 		return nil
 	})
 	return
+}
+
+
+func ( s *Server ) ServeUploads( context *fiber.Ctx ) ( error ) {
+	uuid := context.Params( "uuid" )
+	ext := context.Params( "ext" )
+	x_path := filepath.Join( s.Config.UploadsSavePath , fmt.Sprintf( "%s.%s" , uuid , ext ) )
+	fmt.Println( "ServeUploads() -->" , x_path )
+	if FileExists( x_path ) == false {
+		return context.Status( fiber.StatusInternalServerError ).SendString( "File Doesn't Exist" )
+	}
+	return context.SendFile( x_path , false )
+}
+
+func ( s *Server ) ServeImages( context *fiber.Ctx ) ( error ) {
+	uuid := context.Params( "uuid" )
+	ext := context.Params( "ext" )
+	x_path := filepath.Join( s.Config.ImagesSavePath , fmt.Sprintf( "%s.%s" , uuid , ext ) )
+	fmt.Println( "ServeImages() -->" , x_path )
+	if FileExists( x_path ) == false {
+		return context.Status( fiber.StatusInternalServerError ).SendString( "File Doesn't Exist" )
+	}
+	return context.SendFile( x_path , false )
 }
