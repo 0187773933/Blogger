@@ -50,6 +50,10 @@ func ( s *Server ) PageAddGetWYSIWYG3( context *fiber.Ctx ) ( error ) {
 	return context.SendFile( "./v1/server/html/page_add_wysiwyg_3.html" )
 }
 
+func ( s *Server ) PageAddGetWYSIWYG3Edit( context *fiber.Ctx ) ( error ) {
+	return context.SendFile( "./v1/server/html/page_add_wysiwyg_3_edit.html" )
+}
+
 func ( s *Server ) PageGet( context *fiber.Ctx ) ( error ) {
 	log.Debug( "PageGet()" )
 	// x_url := context.Params( "url" )

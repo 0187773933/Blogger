@@ -137,8 +137,8 @@
 				return new Promise( async function( resolve , reject ) {
 					try {
 						let current_url_path = window.location.pathname;
-						console.log( current_url_path );
-						let url = `/page/get?url=${current_url_path}`;
+						let post_id = current_url_path.split( "/page/edit" )[ 1 ];
+						let url = `/page/get?url=${post_id}`;
 						console.log( url );
 						let response = await fetch( url , { method: "GET" });
 						let response_json = await response.json();
@@ -172,6 +172,12 @@
 						}
 					}
 				});
+
+				let existing_page_data = await get_stored_url_path_html_b64();
+				console.log( existing_page_data );
+				let existing_html = atob( existing_page_data[ "html_b64" ] );
+				console.log( existing_html );
+				$( "#summernote" ).summernote( "code" , existing_html );
 			});
 		</script>
 	</body>
