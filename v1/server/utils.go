@@ -71,7 +71,7 @@ func FileExists( name string ) ( result bool ) {
 // }
 
 var public_limiter = rate_limiter.New( rate_limiter.Config{
-	Max: 1 ,
+	Max: 3 ,
 	Expiration: 1 * time.Second ,
 	KeyGenerator: func( c *fiber.Ctx ) string {
 		return c.Get( "x-forwarded-for" )
@@ -86,7 +86,7 @@ var public_limiter = rate_limiter.New( rate_limiter.Config{
 })
 
 var private_limiter = rate_limiter.New( rate_limiter.Config{
-	Max: 3 ,
+	Max: 6 ,
 	Expiration: 1 * time.Second ,
 	KeyGenerator: func( c *fiber.Ctx ) string {
 		return c.Get( "x-forwarded-for" )

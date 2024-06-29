@@ -47,7 +47,8 @@ func ( s *Server ) SetupRoutes() {
 	s.FiberApp.Get( "/page/add" , private_limiter , validate_session_mw , s.PageAddGetWYSIWYG3 )
 	s.FiberApp.Get( "/page/edit/*" , private_limiter , validate_session_mw , s.PageAddGetWYSIWYG3Edit )
 	s.FiberApp.Post( "/page/add" , private_limiter , validate_session_mw , s.PageAddPost )
-	s.FiberApp.Get( "/page/get" , private_limiter , validate_session_mw , s.PageGet )
+	// s.FiberApp.Get( "/page/get" , private_limiter , validate_session_mw , s.PageGet )
+	s.FiberApp.Get( "/page/get" , private_limiter , s.PageGet )
 	// s.FiberApp.Get( "/page/delete/:uuid" , private_limiter , validate_session_mw , s.PageDelete )
 	// s.FiberApp.Get( "/page/get/:uuid" , private_limiter , validate_session_mw , s.PageGet )
 
