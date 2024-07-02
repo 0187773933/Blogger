@@ -45,7 +45,7 @@
 		( async ()=> {
 			let x = await get_stored_url_path_html_b64();
 			console.log( x );
-			document.getElementById( "static-b64" ).innerHTML = atob( x.html_b64 );
+			document.getElementById( "static-b64" ).innerHTML = atob( x.page.html_b64 );
 		})();
 	</script>
 </body>

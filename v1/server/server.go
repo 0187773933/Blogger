@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"time"
 	bolt "github.com/boltdb/bolt"
 	fiber "github.com/gofiber/fiber/v2"
 	fiber_cookie "github.com/gofiber/fiber/v2/middleware/encryptcookie"
@@ -18,6 +19,7 @@ type Server struct {
 	FiberApp *fiber.App `yaml:"fiber_app"`
 	DB *bolt.DB `yaml:"-"`
 	Config types.ConfigFile `yaml:"config"`
+	TimeZone *time.Location
 }
 
 func request_logging_middleware( context *fiber.Ctx ) ( error ) {
@@ -33,6 +35,7 @@ func New( db *bolt.DB , config types.ConfigFile ) ( server Server ) {
 	server.DB = db
 	server.Config = config
 	GlobalConfig = &config
+	server.TimeZone , _ = time.LoadLocation( config.TimeZone )
 	server.FiberApp.Use( request_logging_middleware )
 	server.FiberApp.Use( favicon.New() )
 	server.FiberApp.Use( fiber_cookie.New( fiber_cookie.Config{

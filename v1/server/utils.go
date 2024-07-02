@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 	"bytes"
+	"encoding/json"
 	filepath "path/filepath"
-	// "strings"
+	"strings"
 	// ical "github.com/arran4/golang-ical"
 	bolt "github.com/boltdb/bolt"
 	ical "github.com/emersion/go-ical"
@@ -123,6 +124,37 @@ func ( s *Server ) Get( bucket_name string , key string ) ( result string ) {
 	return
 }
 
+func ( s *Server ) SetOBJ( bucket_name string , key string , obj interface{} ) {
+	obj_json , err := json.Marshal( obj )
+	if err != nil {
+		log.Debug( err )
+		return
+	}
+	s.DB.Update( func( tx *bolt.Tx ) error {
+		b , err := tx.CreateBucketIfNotExists( []byte( bucket_name ) )
+		if err != nil { log.Debug( err ); return nil }
+		err = b.Put( []byte( key ) , obj_json )
+		if err != nil { log.Debug( err ); return nil }
+		return nil
+	})
+	return
+}
+
+func ( s *Server ) GetOBJ( bucket_name string , key string ) ( result interface{} ) {
+	s.DB.View( func( tx *bolt.Tx ) error {
+		b := tx.Bucket( []byte( bucket_name ) )
+		if b == nil { return nil }
+		v := b.Get( []byte( key ) )
+		if v == nil { return nil }
+		err := json.Unmarshal( v , &result )
+		if err != nil {
+			log.Debug( err )
+			return nil
+		}
+		return nil
+	})
+	return
+}
 
 func ( s *Server ) ServeUploads( context *fiber.Ctx ) ( error ) {
 	uuid := context.Params( "uuid" )
@@ -144,4 +176,38 @@ func ( s *Server ) ServeImages( context *fiber.Ctx ) ( error ) {
 		return context.Status( fiber.StatusInternalServerError ).SendString( "File Doesn't Exist" )
 	}
 	return context.SendFile( x_path , false )
+}
+
+
+// these are temp here for right now
+// we need to copy all of this to new server-arch style
+// see : https://github.com/0187773933/Logger
+func ( s *Server ) GetFormattedTimeString() ( result string ) {
+	time_object := time.Now().In( s.TimeZone )
+	month_name := strings.ToUpper( time_object.Format( "Jan" ) )
+	milliseconds := time_object.Format( ".000" )
+	date_part := fmt.Sprintf( "%02d%s%d" , time_object.Day() , month_name , time_object.Year() )
+	time_part := fmt.Sprintf( "%02d:%02d:%02d%s" , time_object.Hour() , time_object.Minute() , time_object.Second() , milliseconds )
+	result = fmt.Sprintf( "%s === %s" , date_part , time_part )
+	return
+}
+
+func ( s *Server ) GetFormattedTimeStringOBJ() ( result_string string , result_time time.Time ) {
+	result_time = time.Now().In( s.TimeZone )
+	month_name := strings.ToUpper( result_time.Format( "Jan" ) )
+	milliseconds := result_time.Format( ".000" )
+	date_part := fmt.Sprintf( "%02d%s%d" , result_time.Day() , month_name , result_time.Year() )
+	time_part := fmt.Sprintf( "%02d:%02d:%02d%s" , result_time.Hour() , result_time.Minute() , result_time.Second() , milliseconds )
+	result_string = fmt.Sprintf( "%s === %s" , date_part , time_part )
+	return
+}
+
+func ( s *Server ) FormatTime( input_time *time.Time ) ( result string ) {
+	time_object := input_time.In( s.TimeZone )
+	month_name := strings.ToUpper( time_object.Format( "Jan" ) )
+	milliseconds := time_object.Format( ".000" )
+	date_part := fmt.Sprintf( "%02d%s%d" , time_object.Day() , month_name , time_object.Year() )
+	time_part := fmt.Sprintf( "%02d:%02d:%02d%s" , time_object.Hour() , time_object.Minute() , time_object.Second() , milliseconds )
+	result = fmt.Sprintf( "%s === %s" , date_part , time_part )
+	return
 }

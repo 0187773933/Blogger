@@ -30,7 +30,7 @@ func ( f *CustomTextFormatter ) Format( entry *logrus.Entry ) ( result_bytes []b
 	var result_string string
 	if entry.Caller != nil {
 		var caller_function string
-		test_parts := strings.Split( entry.Caller.Function, "github.com/0187773933/FireC2Server/v1/" )
+		test_parts := strings.Split( entry.Caller.Function, "github.com/0187773933/Blogger/v1/" )
 		if len( test_parts ) > 1 {
 			caller_function = test_parts[ 1 ]
 		} else {
@@ -96,9 +96,6 @@ func ( f *CustomJSONFormatter ) Format( entry *logrus.Entry ) ( []byte , error )
 	fmt.Println( entry )
 	return f.JSONFormatter.Format( entry )
 }
-
-
-
 
 // so apparently The limitation arises due to the Go language's initialization order:
 // Package-level variables are initialized before main() is called.

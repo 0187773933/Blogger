@@ -29,7 +29,7 @@ func (s *Server) UploadImage(context *fiber.Ctx) error {
                 ext = filepath.Ext(files[0].Filename)
                 x_uuid = uuid.NewV4().String()
                 newFileName := x_uuid + ext
-                savePath := filepath.Join(s.Config.ImagesSavePath, newFileName)
+                savePath := filepath.Join( s.Config.ImagesSavePath , newFileName )
 
                 err = ioutil.WriteFile(savePath, data, 0644)
                 if err != nil {

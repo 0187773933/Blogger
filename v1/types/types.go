@@ -42,12 +42,10 @@ type FileData struct {
 
 type Page struct {
 	UUID string `json:"uuid"`
-	// ULID string `json:"ulid"`
-	// Date string `json:"date"`
-	// Type string `json:"type"`
-	// HTML string `json:"html"`
+	ULID string `json:"ulid"`
+	Created string `json:"created"`
+	Modified string `json:"modified"`
 	HTMLB64 string `json:"html_b64"`
 	URL string `json:"url"`
-	// Text string `json:"text"`
-	// MD []string `json:"mark_down"`
+	SortedOrder int `json:"sorted_order"`
 }

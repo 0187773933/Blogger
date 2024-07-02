@@ -5,7 +5,9 @@ import (
 	json "encoding/json"
 	fiber "github.com/gofiber/fiber/v2"
 	types "github.com/0187773933/Blogger/v1/types"
-	// bolt "github.com/boltdb/bolt"
+	uuid "github.com/satori/go.uuid"
+	ulid "github.com/oklog/ulid/v2"
+	bolt "github.com/boltdb/bolt"
 )
 
 func ( s *Server ) Home( context *fiber.Ctx ) ( error ) {
@@ -21,19 +23,37 @@ func ( s *Server ) Home( context *fiber.Ctx ) ( error ) {
 }
 
 // Adds { key: HTML_STRING-b64 } to static-routes
-func ( s *Server ) PageAddPost( context *fiber.Ctx ) ( error ) {
-	log.Debug( "PageAddPost()" )
+func ( s *Server ) PageAdd( context *fiber.Ctx ) ( error ) {
+	log.Debug( "PageAdd()" )
 	context_body := context.Body()
 	var p types.Page
 	json.Unmarshal( context_body , &p )
-	// p.UUID = uuid.NewV4().String()
+	p.UUID = uuid.NewV4().String()
+	p.ULID = ulid.Make().String()
+	p.Created = s.GetFormattedTimeString()
+	p.SortedOrder = -1
 	log.Debug( fmt.Sprintf( "Storing Content for URL : %s" , p.URL ) )
-	s.Set( "pages" , p.URL ,  p.HTMLB64 )
-	fmt.Println( p.HTMLB64 )
+	// s.Set( "pages" , p.URL ,  p.HTMLB64 )
+	s.SetOBJ( "pages" , p.URL , p )
 	return context.JSON( fiber.Map{
 		"route": "/page/add" ,
-		// "uuid": p.UUID ,
-		"url": p.URL ,
+		"page": p ,
+		"result": true ,
+	})
+}
+
+func ( s *Server ) PageDelete( context *fiber.Ctx ) ( error ) {
+	log.Debug( "PageDelete()" )
+	x_url := context.Query( "url" )
+	s.DB.Update( func( tx *bolt.Tx ) error {
+		b := tx.Bucket( []byte( "pages" ) )
+		if b == nil { return nil }
+		b.Delete( []byte( x_url ) )
+		return nil
+	})
+	return context.JSON( fiber.Map{
+		"route": "/page/delete" ,
+		"url": x_url ,
 		"result": true ,
 	})
 }
@@ -58,11 +78,43 @@ func ( s *Server ) PageGet( context *fiber.Ctx ) ( error ) {
 	log.Debug( "PageGet()" )
 	// x_url := context.Params( "url" )
 	x_url := context.Query( "url" )
-	page_html_b64 := s.Get( "pages" , x_url )
+	// page_html_b64 := s.Get( "pages" , x_url )
+	var p types.Page
+	s.DB.View( func( tx *bolt.Tx ) error {
+		b := tx.Bucket( []byte( "pages" ) )
+		if b == nil { return nil }
+		v := b.Get( []byte( x_url ) )
+		if v == nil { return nil }
+		err := json.Unmarshal( v , &p )
+		if err != nil {
+			log.Debug( err )
+			return nil
+		}
+		return nil
+	})
 	return context.JSON( fiber.Map{
 		"route": "/page/get/:url" ,
-		"url": x_url ,
-		"html_b64": page_html_b64 ,
+		"page": p ,
+		"result": true ,
+	})
+}
+
+func ( s *Server ) PageGetAll( context *fiber.Ctx ) ( error ) {
+	var pages []types.Page
+	s.DB.View( func( tx *bolt.Tx ) error {
+		c := tx.Bucket( []byte( "pages" ) ).Cursor()
+		for k , v := c.First(); k != nil; k , v = c.Next() {
+			var p types.Page
+			json.Unmarshal( v , &p )
+			if p.UUID == "" { continue }
+			pages = append( pages , p )
+		}
+		return nil
+	})
+	return context.JSON( fiber.Map{
+		"url": "/post/get/all" ,
+		"method": "GET" ,
+		"pages": pages ,
 		"result": true ,
 	})
 }

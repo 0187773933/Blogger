@@ -41,6 +41,20 @@
 			</div>
 		</div>
 		<script type="text/javascript">
+			function slugify( text ) {
+				return text
+					.toString()
+					.toLowerCase()
+					.replace( /\s+/g , '-' ) // Replace spaces with -
+					// .replace(/[^a-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+/g, "-") // Remove invalid URL characters
+					// .replace( /[:/?#\[\]@!$&'()*+,;=%]/g , "-" )
+					.replace( /[:?#\[\]@!$&'()*+,;=%]/g , "-" )
+					.replace( /\-\-+/g , '-' ); // Replace multiple - with single -
+			}
+			function on_url_type( event ) {
+				if ( !event.target ) { return; }
+				event.target.value = slugify( event.target.value );
+			}
 			function page_add( post_data ) {
 				return new Promise( async function( resolve , reject ) {
 					try {
@@ -114,7 +128,7 @@
 							"url": page_url ,
 							"html_b64": editor_html_b64
 						});
-						window.EDITING_URL = result.url;
+						window.EDITING_URL = result.page.url;
 						window.open( window.EDITING_URL , "_blank" );
 						resolve();
 						return;
@@ -172,6 +186,7 @@
 						}
 					}
 				});
+				document.getElementById( "page-url" ).addEventListener( "input" , on_url_type );
 			});
 		</script>
 	</body>
