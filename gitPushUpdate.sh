@@ -51,4 +51,4 @@ fi
 git remote add origin "$GIT_SSH_URL"
 
 git push origin --tags
-git push origin master -f
+git push origin master

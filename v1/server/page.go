@@ -110,7 +110,11 @@ func ( s *Server ) PageGet( context *fiber.Ctx ) ( error ) {
 func ( s *Server ) PagesGetAll( context *fiber.Ctx ) ( error ) {
 	var pages []types.Page
 	s.DB.View( func( tx *bolt.Tx ) error {
-		c := tx.Bucket( []byte( "pages" ) ).Cursor()
+		b := tx.Bucket([]byte("pages"))
+		if b == nil {
+			return fmt.Errorf("bucket %q not found", "pages")
+		}
+		c := b.Cursor()
 		for k , v := c.First(); k != nil; k , v = c.Next() {
 			var p types.Page
 			json.Unmarshal( v , &p )
