@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Custom Blogger Server</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" href="">
+		<link href="/cdn/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+		<script src="/cdn/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="/cdn/bootstrap-icons.min.css">
+		<script src="/cdn/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+		<script src="/cdn/sortable.min.js" integrity="sha256-ymhDBwPE9ZYOkHNYZ8bpTSm1o943EH2BAOWjAQB+nm4=" crossorigin="anonymous"></script>
+		<style type="text/css">
+/*			.handle {
+				cursor: grab;
+			}*/
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<br>
+			<div class="row">
+				<div class="col-sm">
+					<center><h1>Welcome to Custom Blogger Server</h1></center>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6">
+					<div id="pages" class="list-group col">
+					</div>
+				</div>
+				<div class="col-sm-3"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function get_all_pages() {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						let x_url = `/${window.AP}/pages/get/all`;
+						let response = await fetch( x_url , {
+							method: "GET" ,
+						});
+						let response_json = await response.json();
+						resolve( response_json );
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			function update_page_order( adjustments ) {
+				return new Promise( async function( resolve , reject ) {
+					try {
+						let x_url = `/${window.AP}/pages/update/order`;
+						console.log( adjustments );
+						let x_body = JSON.stringify( { "order": adjustments } );
+						console.log( x_body );
+						let response = await fetch( x_url , {
+							method: "POST" ,
+							headers: { 'Content-Type': 'application/json' } ,
+							body: x_body ,
+						});
+						let response_json = await response.json();
+						resolve( response_json );
+						return;
+					}
+					catch( error ) { console.log( error ); resolve( false ); return; }
+				});
+			}
+			async function on_sortable_change( event ) {
+				let list = window.SORTABLE_PAGES.toArray();
+				let adjustments = [];
+				for ( let i = 0; i < window.PAGES.length; ++ i ) {
+					adjustments.push( [ window.PAGES[ i ].url , list[ i ] ] );
+				}
+				let r = await update_page_order( adjustments );
+				console.log( r );
+			}
+			async function init() {
+				let pages = await get_all_pages();
+				if ( pages.result !== true ) { return }
+				pages = pages.pages;
+				// pages.sort( ( a , b ) => b.ulid.localeCompare( a.ulid ) );
+				pages.sort( ( a , b ) => {
+					// If both pages have valid sorted_order, use that
+					if ( a.sorted_order !== -1 && b.sorted_order !== -1 ) {
+						return a.sorted_order - b.sorted_order;
+					}
+					// If only a has valid sorted_order, it comes first
+					else if ( a.sorted_order !== -1 ) {
+						return -1;
+					}
+					// If only b has valid sorted_order, it comes first
+					else if ( b.sorted_order !== -1 ) {
+						return 1;
+					}
+					// If neither has valid sorted_order, sort by ULID (descending)
+					else {
+						return b.ulid.localeCompare( a.ulid );
+					}
+				});
+				window.PAGES = pages;
+				let page_holder_element = document.getElementById( "pages" );
+				for ( let i = 0; i < pages.length; ++i ) {
+					const li = document.createElement( "div" );
+					li.className = 'list-group-item';
+					const icon = document.createElement( "i" );
+					icon.className = "bi bi-arrow-right-circle-fill";
+					const text_node = document.createTextNode( '  ' + pages[ i ].url );
+					const link = document.createElement( "a" );
+					link.target = "_blank";
+					link.href = pages[ i ].url;
+					link.appendChild( text_node );
+					li.appendChild( icon );
+					li.appendChild( link );
+					console.log( li );
+					page_holder_element.appendChild( li );
+				}
+				// https://sortablejs.github.io/Sortable/#handle
+				window.SORTABLE_PAGES = new Sortable( page_holder_element , {
+					// handle: '.handle',
+					// animation: 150 ,
+					group: "main" ,
+					dataIdAttr: "data-sort-index" ,
+					scroll: true ,
+					forceAutoScrollFallback: false ,
+					scrollSensitivity: 30 ,
+					scrollSpeed: 10 ,
+					bubbleScroll: true ,
+					onChange: on_sortable_change ,
+				});
+				console.log( pages );
+				console.log( "ready ???" );
+			}
+			$( document ).ready( init );
+		</script>
+	</body>
+</html>

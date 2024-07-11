@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" href="">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" integrity="sha256-ymhDBwPE9ZYOkHNYZ8bpTSm1o943EH2BAOWjAQB+nm4=" crossorigin="anonymous"></script> -->
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha256-3ISyluw+iE3gkxWPdg/Z1Ftser5YtTgVV/ThOPRqWK4=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js" integrity="sha256-8MoD3xlLjD1gF/9FXbag75iFeQVmP6MRps3teIsVNAs=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha256-nLjaz8CGwpZsnsS6VPSi3EO3y+KzPOwaJ0PYhsf7R6c=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote.min.css" integrity="sha256-/w0agvO58d9pScfviHAInyn1EUj29ofZjRzKOo2AjIQ=" crossorigin="anonymous">
+		<title>Page Renderer</title>
+</head>
+<body>
+	<div class="container-fluid">
+		<br>
+		<div class="row">
+			<div class="col-xl-2"></div>
+			<div class="col-xl-8 col-12">
+				<div id="static-b64">
+					<span>Loading ...</span>
+				</div>
+			</div>
+			<div class="col-xl-2"></div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		function compute_base_url() { // because of prefixes
+			let path_base_parts = window.location.pathname.split( "/page/add" ).filter( x => x !== "" );
+			let path_base = "";
+			// if ( path_base_parts.length > 0 ) { path_base = path_base_parts[ 0 ].replace( /^\// , '' ); }
+			if ( path_base_parts.length > 0 ) { path_base = path_base_parts[ 0 ] }
+			window.PATH_BASE = path_base;
+			console.log( window.PATH_BASE );
+		}
+		function get_stored_url_path_html_b64() {
+			return new Promise( async function( resolve , reject ) {
+				try {
+					let current_url_path = window.location.pathname;
+					let url = `/page/get?url=${current_url_path}`;
+					let response = await fetch( url , { method: "GET" });
+					let response_json = await response.json();
+					resolve( response_json );
+					return;
+				}
+				catch( error ) { console.log( error ); resolve( false ); return; }
+			});
+		}
+		async function init() {
+			// compute_base_url();
+			let x = await get_stored_url_path_html_b64();
+			console.log( x );
+			console.log( atob( x.page.html_b64 ) );
+			let elem = document.getElementById( "static-b64" );
+			elem.innerHTML = atob( x.page.html_b64 );
+			renderMathInElement( elem , {
+				strict: "ignore" ,
+				delimiters: [ // https://stackoverflow.com/a/45301641
+					{ left: "$$" , right: "$$" , display: true } ,
+					{ left: "\\[" , right: "\\]" , display: true } ,
+					{ left: "$" , right: "$" , display: false } ,
+					{ left: "\\(" , right: "\\)" , display: false }
+				]
+			});
+		}
+		document.addEventListener( "DOMContentLoaded" , init );
+	</script>
+</body>
+</html>
