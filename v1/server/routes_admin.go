@@ -44,5 +44,5 @@ func ( s *Server ) SetupAdminRoutes() {
 	// admin.Get( "/page/get" , s.PageGet )
 	admin.Get( "/pages/get/all" , s.PagesGetAll )
 	admin.Post( "/pages/update/order" , s.PagesUpdateOrder )
-
+	admin.Post( "/upload-image" , s.UploadImage )
 }
