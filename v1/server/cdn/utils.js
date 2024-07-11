@@ -51,3 +51,14 @@ function set_url( new_url ) {
 	// Update the URL with a full page reload
 	// window.location.href = url.toString();
 }
+
+func ( s *Server ) ServeImages( context *fiber.Ctx ) ( error ) {
+	uuid := context.Params( "uuid" )
+	ext := context.Params( "ext" )
+	x_path := filepath.Join( s.Config.ImagesSavePath , fmt.Sprintf( "%s.%s" , uuid , ext ) )
+	fmt.Println( "ServeImages() -->" , x_path )
+	if FileExists( x_path ) == false {
+		return context.Status( fiber.StatusInternalServerError ).SendString( "File Doesn't Exist" )
+	}
+	return context.SendFile( x_path , false )
+}

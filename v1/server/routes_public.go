@@ -86,7 +86,14 @@ func ( s *Server ) SetupPublicRoutes() {
 	s.FiberApp.Get( admin_login_url , PublicLimter , s.LoginPage )
 	s.FiberApp.Post( admin_login_url , PublicLimter , s.AdminLogin )
 	s.FiberApp.Get( admin_logout_url , PublicLimter , s.AdminLogout )
+
+	images_match_url := fmt.Sprintf( "/images/:uuid.:ext" )
+	s.FiberApp.Get( images_match_url , PublicLimter , s.ServeImages )
+
 	s.FiberApp.Get( "/page/get" , PublicLimter , s.PageGet )
 	s.FiberApp.Get( "/pages/get/all" , PublicLimter , s.PagesGetAll )
+
+
+
 	s.FiberApp.Get( "/*" , PublicLimter , s.PageHandler )
 }

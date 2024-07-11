@@ -29,17 +29,14 @@ func (s *Server) UploadImage(context *fiber.Ctx) error {
                 ext = filepath.Ext(files[0].Filename)
                 x_uuid = uuid.NewV4().String()
                 newFileName := x_uuid + ext
-                savePath := filepath.Join( s.Config.ImagesSavePath , newFileName )
-
-                err = ioutil.WriteFile(savePath, data, 0644)
+                save_path := filepath.Join( s.Config.ImagesSavePath , newFileName )
+                err = ioutil.WriteFile(save_path, data, 0644)
                 if err != nil {
                     return context.Status(fiber.StatusInternalServerError).SendString("Error Saving File")
                 }
-
                 fileData.FileName = files[0].Filename
-
                 fmt.Println("Uploaded image:", x_uuid, files[0].Filename)
-                fmt.Println("Saved as:", savePath)
+                fmt.Println("Saved as:", save_path)
             }
         }
     }

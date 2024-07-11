@@ -1,13 +1,28 @@
 package server
 
 import (
-	// "fmt"
+	"fmt"
+	"os"
 	// "time"
 	// "strings"
+	"path/filepath"
 	"encoding/json"
 	bolt "github.com/boltdb/bolt"
-	// fiber "github.com/gofiber/fiber/v2"
+	fiber "github.com/gofiber/fiber/v2"
 )
+
+func FileExists( name string ) ( result bool ) {
+	result = false
+	_ , err := os.Stat( name )
+	if os.IsNotExist( err ) {
+		return
+	}
+	if err != nil {
+		return
+	}
+	result = true
+	return
+}
 
 func ( s *Server ) Set( bucket_name string , key string , value string ) {
 	s.DB.Update( func( tx *bolt.Tx ) error {
@@ -62,4 +77,16 @@ func ( s *Server ) GetOBJ( bucket_name string , key string ) ( result interface{
 		return nil
 	})
 	return
+}
+
+
+func ( s *Server ) ServeImages( context *fiber.Ctx ) ( error ) {
+	uuid := context.Params( "uuid" )
+	ext := context.Params( "ext" )
+	x_path := filepath.Join( s.Config.ImagesSavePath , fmt.Sprintf( "%s.%s" , uuid , ext ) )
+	fmt.Println( "ServeImages() -->" , x_path )
+	if FileExists( x_path ) == false {
+		return context.Status( fiber.StatusInternalServerError ).SendString( "File Doesn't Exist" )
+	}
+	return context.SendFile( x_path , false )
 }
