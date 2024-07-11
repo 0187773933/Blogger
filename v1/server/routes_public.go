@@ -73,10 +73,11 @@ func ( s *Server ) SetupPublicRoutes() {
 	}
 	var admin_login_url string
 	if s.Config.URLS.AdminLogin != "" {
-		admin_login_url = fmt.Sprintf( "/%s/%s" , s.Config.URLS.AdminPrefix , s.Config.URLS.AdminLogin )
+		admin_login_url = fmt.Sprintf( "/%s" , s.Config.URLS.AdminLogin )
 	} else {
-		admin_login_url = fmt.Sprintf( "/%s/login" , s.Config.URLS.AdminPrefix )
+		admin_login_url = "/admin/login"
 	}
+	fmt.Println( "Admin Login URL ===" , admin_login_url )
 	admin_logout_url := fmt.Sprintf( "/%s/logout" , s.Config.URLS.AdminPrefix )
 	s.FiberApp.Get( home_url , PublicLimter , s.RenderHomePage )
 	// s.FiberApp.Get( login_url , PublicLimter , s.LoginPage )
